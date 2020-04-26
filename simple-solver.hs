@@ -87,21 +87,46 @@ choices :: Board -> Matrix Choices
 choices = map (map choose)
 
 -- computes the cartesian product oa a list of lists
+-- Ask Yorgey
 cp :: [[a]] -> [[a]]
 cp [] = [[]]
 cp (xs : xss) = [x : ys | x <- xs, ys <- cp xss]
 
 -- mcp = matrix cartesian product
---mcp :: Matrix [a] -> [Matrix a]
+-- It takes in a matrix that contains all choices for that spot on the board
+-- make a cartesian product of each of the choices
+-- it makes every possible matrices
+mcp :: Matrix [a] -> [Matrix a]
+mcp xs = cp (map cp xs)
 
+-- First get a matrix that has has all choices for each cell
+-- Then, it will generate all boards possble given these choices
+-- Finally, it will only return the correct board(s)
+sudoku :: Board -> [Board]
+sudoku b = filter correct (mcp (choices b))
 
 
 boardsize = 4
 boxsize = 2
-cellvals = “1234”
-blank = (= ‘.’)
+cellvals = "1234"
+blank = (== '.')
 
 matrix_a = [['1', '2', '3', '4'], ['3', '4', '1', '2'], ['2', '3', '4', '1'], ['4', '1', '2', '3']]
+
+sudoku_test_1 = [['.', '2', '3', '4'], ['3', '4', '1', '2'], ['2', '3', '4', '1'], ['4', '1', '2', '3']]
+
+-- *Main> sudoku sudoku_test_1
+-- [["1234","3412","2341","4123"]]
+
+sudoku_test_2 = [['.', '2', '3', '4'], ['3', '.', '1', '2'], ['2', '3', '4', '1'], ['4', '1', '2', '3']]
+
+-- *Main> sudoku sudoku_test_2
+-- [["1234","3412","2341","4123"]]
+
+-- half of cells missing
+sudoku_test_3 = [['.', '2', '3', '.'], ['.', '.', '1', '2'], ['.', '3', '.', '1'], ['4', '1', '.', '.']]
+-- *Main> sudoku sudoku_test_3
+-- [["1234","3412","2341","4123"]]
 
 matrix_with_duplicates = [['1', '2', '3', '4'], ['1', '4', '1', '2'], ['2', '3', '4', '4'], ['4', '1', '2', '3']]
 
