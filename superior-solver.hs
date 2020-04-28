@@ -1,7 +1,7 @@
 -- Sudoku Solver
 -- Functional Programming Final Project
 -- Chloe Baker, Cookie, Kate Sanders
-import Data.List (transpose, (\\))
+import Data.List (transpose, (\\), length)
 
 type Matrix a = [[a]]
 type Board = Matrix Char
@@ -40,44 +40,47 @@ choose e = if blank e then cellvals else [e]
 choices :: Board -> Matrix Choices
 choices = map (map choose)
 
--- tests whether the argument is a singleton list
 single :: [a] -> Bool
 single [] = False
 single (x:[]) = True
 single (x : xs) = False
 
--- If there is only one option, it sets it to that
 fixed :: [Choices] -> Choices
 fixed xs = concat (filter single xs)
 
--- (\\) deletes the first occurance of each thing in a list
 remove :: Eq a => [a] -> [a] -> [a]
 remove fxd cs = if single cs then cs else cs \\ fxd
 
--- Takes in a list of choices, css
--- finds the fixed elements in that list of choices,
--- for each Choices in the list of Choices,
--- The fixed elements will be removed
 reduce :: [Choices] -> [Choices]
 reduce css = map (remove (fixed css)) css
 
--- Takes in eaither rows, cols, or boxes
--- then splits it up into the rows cols or boxes
--- maps the reduce function to those groups
--- and then sets them back to their correct position
--- This works because rows, cols, and boxes are all their own inverses!
 pruneBy :: (Matrix Choices -> Matrix Choices) -> Matrix Choices -> Matrix Choices
 pruneBy f m = f (map reduce (f m))
 
--- This runs pruneBy on all of the rows, then cols, then boxes
 prune :: Matrix Choices -> Matrix Choices
 prune b = pruneBy boxes (pruneBy cols (pruneBy rows b))
 
--- maybe do reduce on the columns and the rows and the boxes
+-- This is checking if there are no single duplicates
+-- If there is a single duplicate, safe returns false
+-- and thus this board has no solutions
+safe :: Matrix Choices -> Bool
+safe cm = all  (nodups . fixed) (rows cm) && all (nodups . fixed) (cols cm) && all (nodups . fixed) (boxes cm)
 
--- prunePal xs = map (remove (pruneBuddy xs)) xs
+-- returns true if any spot in the matrix is null
+void :: Matrix Choices -> Bool
+void = any (any null)
 
--- pruneBuddy (x : xs) = if single x then x : pruneBuddy xs else pruneBuddy xs
+-- Checks to see if the matricies given has duplicates or any space that cannot contain a value
+-- Blocked matrices never lead to a solution, so we can discard them
+blocked :: Matrix Choices -> Bool
+blocked cm = void cm || not (safe cm)
+
+-- Finds the cell with the least number of Choices
+minchoice :: Matrix Choices -> Int
+minchoice = minimum . filter (1 <) . concat . map (map length) 
+
+
+-- expand :: Matrix Choices -> [Matrix Choices]
 
 
 cp :: [[a]] -> [[a]]

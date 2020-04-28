@@ -77,7 +77,8 @@ correct :: Board -> Bool
 correct b = all nodups (rows b) && all nodups (cols b) && all nodups (boxes b)
 
 -- if the spot e is equal to the blank character, then return a list with all possible values for that spot
--- otherwise, return a list with just tha character
+-- otherwise, return a list with just that character
+choose :: Char -> [Char]
 choose e = if blank e then cellvals else [e]
 -- could refine this by giving a list of actual possibilities, not just every cellval
 -- to make sure that there are no cellvals duplicated
@@ -87,10 +88,15 @@ choices :: Board -> Matrix Choices
 choices = map (map choose)
 
 -- computes the cartesian product oa a list of lists
--- Ask Yorgey
+-- all possible ways of taking one element from each list
+-- this is the sequence function for list
+-- could say cp = sequence
 cp :: [[a]] -> [[a]]
 cp [] = [[]]
 cp (xs : xss) = [x : ys | x <- xs, ys <- cp xss]
+-- for x in xs
+--  for y in cp xss
+--      result_list.append(x:ys)
 
 -- mcp = matrix cartesian product
 -- It takes in a matrix that contains all choices for that spot on the board
