@@ -81,7 +81,17 @@ minchoice = minimum . filter (1 <) . concat . map (map length)
 
 
 expand :: Matrix Choices -> [Matrix Choices]
-expand cm = [rows1 ++ [row1 ++ [c] : row2] ++ rows3 | c <- cs] -- puts the list back together
+expand cm = [rows1 ++ [row1 ++ [c] : row2] ++ rows2 | c <- cs] -- puts the list back together
+             where (rows1,row : rows2) = break (any best) cm  -- Breaks the matrix of a list of everything before the "best" row and a list of everything after the "best" row and the variable row which is the best row
+                   (row1, cs : row2) = break best row  -- Takes in the row containing the "best" and splits it into a list before the "best" and a list of everything else with the "best" as its first element
+                   best cs = (length cs == n) -- Method to check if cs is the best choice
+                   n = minchoice cm 
+
+search :: Matrix Choices -> [Matrix Choices]
+search cm
+  |  blocked cm = []  -- Blocked matrices can never lead to a solution
+  |  all (all single) cm = [cm] -- If everything in the matrix has one possible choice, it is the only solution
+  |  otherwise = (concat . map(search . prune) . expand) cm -- Uses the matrixes that get returned from the expand function, prunes the ones that don't work, and then recursively calls itself to continue the process
 
 
 cp :: [[a]] -> [[a]]
@@ -92,7 +102,7 @@ mcp :: Matrix [a] -> [Matrix a]
 mcp xs = cp (map cp xs)
 
 sudoku :: Board -> [Board]
-sudoku b = filter correct (mcp ( prune (choices b)))
+sudoku = map (map head) . search . prune . choices  -- Uses search to prune choices until it finds the only possibilities for a matrix of choices, and then converts that into a board
 
 
 
