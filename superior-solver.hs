@@ -80,7 +80,8 @@ minchoice :: Matrix Choices -> Int
 minchoice = minimum . filter (1 <) . concat . map (map length) 
 
 
--- expand :: Matrix Choices -> [Matrix Choices]
+expand :: Matrix Choices -> [Matrix Choices]
+expand cm = [rows1 ++ [row1 ++ [c] : row2] ++ rows3 | c <- cs] -- puts the list back together
 
 
 cp :: [[a]] -> [[a]]
