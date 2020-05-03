@@ -79,7 +79,6 @@ blocked cm = void cm || not (safe cm)
 minchoice :: Matrix Choices -> Int
 minchoice = minimum . filter (1 <) . concat . map (map length) 
 
-
 expand :: Matrix Choices -> [Matrix Choices]
 expand cm = [rows1 ++ [row1 ++ [c] : row2] ++ rows2 | c <- cs] -- puts the list back together
              where (rows1,row : rows2) = break (any best) cm  -- Breaks the matrix of a list of everything before the "best" row and a list of everything after the "best" row and the variable row which is the best row
@@ -103,6 +102,7 @@ mcp xs = cp (map cp xs)
 
 sudoku :: Board -> [Board]
 sudoku = map (map head) . search . prune . choices  -- Uses search to prune choices until it finds the only possibilities for a matrix of choices, and then converts that into a board
+
 
 
 
