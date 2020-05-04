@@ -101,7 +101,7 @@ mcp :: Matrix [a] -> [Matrix a]
 mcp xs = cp (map cp xs)
 
 sudoku :: Board -> [Board]
-sudoku = map (map head) . search . prune . choices  -- Uses search to prune choices until it finds the only possibilities for a matrix of choices, and then converts that into a board
+sudoku = map (map (map head)) . search . prune . choices  -- Uses search to prune choices until it finds the only possibilities for a matrix of choices, and then converts that into a board
 
 
 
