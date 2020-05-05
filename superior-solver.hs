@@ -1,7 +1,13 @@
 -- Sudoku Solver
 -- Functional Programming Final Project
 -- Chloe Baker, Cookie, Kate Sanders
+
+module Solver where 
+
+  
 import Data.List (transpose, (\\), length)
+
+
 
 type Matrix a = [[a]]
 type Board = Matrix Char
@@ -102,10 +108,6 @@ mcp xs = cp (map cp xs)
 
 sudoku :: Board -> [Board]
 sudoku = map (map (map head)) . search . prune . choices  -- Uses search to prune choices until it finds the only possibilities for a matrix of choices, and then converts that into a board
-
-
-
-
 
 
 boardsize = 4
