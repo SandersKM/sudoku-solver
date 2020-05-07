@@ -87,7 +87,7 @@ choose e = if blank e then cellvals else [e]
 choices :: Board -> Matrix Choices
 choices = map (map choose)
 
--- computes the cartesian product oa a list of lists
+-- computes the cartesian product on a list of lists
 -- all possible ways of taking one element from each list
 -- this is the sequence function for list
 -- could say cp = sequence
